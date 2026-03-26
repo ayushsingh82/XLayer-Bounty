@@ -8,8 +8,8 @@ Frontend console for an agent-driven native-OKB bounty workflow on XLayer.
 
 - RainbowKit wallet connect in navbar
 - Agent-first landing and dashboard UX
-- Operator mode: create bounty from GitHub issue URL + OKB amount
-- Solver mode: submit PR URL against open bounties
+- Operator mode: create bounty from GitHub issue URL + OKB amount (wallet transaction)
+- Solver mode: submit PR URL + payout wallet against open bounties
 - Auto-resolution status and reasoning for agent review loops
 
 > This frontend currently uses local API storage for rapid iteration. On-chain contracts live in `../contracts`.
@@ -21,6 +21,11 @@ The UI is intended as an operator surface for autonomous workflows:
 - Agents evaluate PR progress/status and attach rationale.
 - Agents coordinate with contract actions for final resolution.
 
+Local flow details:
+- Creating a bounty triggers a real wallet transaction (`createBounty`) on XLayer.
+- API layer stores local prototype metadata for rapid UI iteration.
+- Solver submissions require both PR URL and payout wallet address.
+
 Reference evaluator logic:
 - `../../AutoBounty/contracts/genlayer/BountyJudge.py`
 
@@ -28,6 +33,7 @@ Reference evaluator logic:
 
 - `/` — landing page
 - `/dashboard` — creator/developer bounty console
+- `/dashboard` — operator/solver bounty console
 - `/api/bounties` — list + create
 - `/api/bounties/[id]/submit` — submit PR + resolve prototype flow
 
