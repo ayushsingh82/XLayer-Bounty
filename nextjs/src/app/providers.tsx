@@ -4,7 +4,7 @@ import { ReactNode, useState } from "react";
 import "@rainbow-me/rainbowkit/styles.css";
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { WagmiProvider } from "wagmi";
-import { mainnet, polygon, optimism, arbitrum, base } from "wagmi/chains";
+import { xLayerTestnet } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "YOUR_PROJECT_ID";
@@ -12,7 +12,7 @@ const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "YOUR_PROJ
 const config = getDefaultConfig({
   appName: "XLayer",
   projectId,
-  chains: [mainnet, polygon, optimism, arbitrum, base],
+  chains: [xLayerTestnet],
   ssr: true,
 });
 

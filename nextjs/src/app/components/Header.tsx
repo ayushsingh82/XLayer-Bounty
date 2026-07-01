@@ -14,6 +14,9 @@ export function Header() {
           <span className="text-accent-green">X</span>Layer
         </Link>
         <nav className="flex items-center gap-6 text-sm font-medium text-white/80">
+          <Link href="/dashboard" className="transition-colors hover:text-white">
+            Dashboard
+          </Link>
           <a href="#about" className="transition-colors hover:text-white">
             About
           </a>

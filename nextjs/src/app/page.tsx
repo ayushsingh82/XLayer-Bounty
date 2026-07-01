@@ -24,8 +24,8 @@ export default function Home() {
             just a polished foundation you can extend.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-3">
-            <Link href="#" className="btn-green px-5 py-2.5 text-sm font-semibold transition-colors">
-              Get started
+            <Link href="/dashboard" className="btn-green px-5 py-2.5 text-sm font-semibold transition-colors">
+              Open dashboard
             </Link>
             <Link href="#about" className="btn-black px-5 py-2.5 text-sm font-semibold transition-colors">
               Learn more
@@ -38,8 +38,8 @@ export default function Home() {
         <div className="section-container text-center">
           <h2 className="text-2xl font-semibold tracking-tight text-white">Ready for your next build</h2>
           <p className="mt-3 text-white/70">
-            This project is set up as a Next.js app with the same visual direction as synthesis so
-            you can plug in your own features quickly.
+            This prototype follows the AutoBounty-style flow with original code on XLayer: create
+            bounties, submit PR links, and view automated resolution status.
           </p>
         </div>
       </section>
