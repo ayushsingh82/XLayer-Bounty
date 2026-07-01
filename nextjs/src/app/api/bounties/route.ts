@@ -10,7 +10,7 @@ export async function GET() {
 export async function POST(request: Request) {
   const body = (await request.json()) as {
     issueUrl?: string;
-    amountUsdc?: number;
+    amountOkb?: number;
     creator?: string;
   };
 
@@ -20,14 +20,14 @@ export async function POST(request: Request) {
   if (!body.creator?.trim()) {
     return NextResponse.json({ error: "Creator wallet is required" }, { status: 400 });
   }
-  if (!body.amountUsdc || body.amountUsdc <= 0) {
+  if (!body.amountOkb || body.amountOkb <= 0) {
     return NextResponse.json({ error: "Amount must be greater than 0" }, { status: 400 });
   }
 
   const item: BountyItem = {
     id: `bty_${Date.now()}`,
     issueUrl: body.issueUrl.trim(),
-    amountUsdc: Number(body.amountUsdc),
+    amountOkb: Number(body.amountOkb),
     creator: body.creator.trim(),
     createdAt: new Date().toISOString(),
     status: "open",

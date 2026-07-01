@@ -1,54 +1,52 @@
-# XLayer AutoBounty Prototype
+# XLayer-Bounty Frontend
 
-This app is an original XLayer implementation inspired by AutoBounty-style flows:
+Frontend for a native-OKB bounty workflow on XLayer.
 
-- Wallet connect in navbar (RainbowKit + Wagmi)
-- Dark/silver landing page with PixelBlast strip
-- Creator dashboard to create bounties from GitHub issue URLs
-- Developer flow to submit PR URLs
-- Automated prototype resolution (approve/reject + reason)
+![XLayer-Bounty Logo](public/logo.png)
 
-Current setup is a working product prototype with local API storage. Smart contracts are prepared separately in `../contracts`.
+## Features
 
-## Stack
+- RainbowKit wallet connect in navbar
+- Dark/silver landing page
+- Creator mode: create bounty from GitHub issue URL + OKB amount
+- Developer mode: submit PR URL against open bounties
+- Prototype auto-resolution status and reasoning
 
-- Next.js (App Router)
-- TypeScript
-- TailwindCSS
-- RainbowKit + Wagmi + viem
-- React Query
+> This frontend currently uses local API storage for rapid iteration. On-chain contracts live in `../contracts`.
 
-## App Routes
+## Routes
 
 - `/` — landing page
-- `/dashboard` — bounty workflow UI
-- `/api/bounties` — list/create bounties
+- `/dashboard` — creator/developer bounty console
+- `/api/bounties` — list + create
 - `/api/bounties/[id]/submit` — submit PR + resolve prototype flow
 
-## Local Run
+## Run
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open `http://localhost:3000`.
 
-## Wallet Setup
+## Environment
 
-Add a WalletConnect project ID in `.env.local`:
+Create `.env.local`:
 
 ```bash
 NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_project_id
 ```
 
-Without this, wallet connector may not work correctly in production wallets.
+## Next Integration Step
 
-## Contracts (Escrow)
+Replace local API handlers with on-chain calls to `BountyEscrowNative` from `../contracts`:
 
-Escrow contracts live in:
+- `createBounty(issueUrl)` with `msg.value`
+- `submitSolution(bountyId, prUrl)`
+- `resolveBounty(bountyId, approved)` via relayer/owner
 
-- `../contracts/BountyEscrow.sol`
-- `../contracts/MockUSDC.sol`
+## Deployed Contract
 
-These are intended for wiring the dashboard to on-chain bounty create/submit/resolve flows.
+- `BountyEscrowNative` (XLayer testnet): `0xee34aef61c8f20703a89eEcfC1eB5819Fd18FfcC`
+- Explorer: [View on OKX XLayer Explorer](https://www.okx.com/web3/explorer/xlayer-test/address/0xee34aef61c8f20703a89eEcfC1eB5819Fd18FfcC)

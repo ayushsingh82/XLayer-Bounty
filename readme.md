@@ -1,54 +1,65 @@
-# XLayer AutoBounty Prototype
+# XLayer-Bounty
 
-This app is an original XLayer implementation inspired by AutoBounty-style flows:
+XLayer-Bounty is a bounty platform prototype on XLayer using native OKB escrow.
 
-- Wallet connect in navbar (RainbowKit + Wagmi)
-- Dark/silver landing page with PixelBlast strip
-- Creator dashboard to create bounties from GitHub issue URLs
-- Developer flow to submit PR URLs
-- Automated prototype resolution (approve/reject + reason)
+![XLayer-Bounty Logo](nextjs/public/logo.png)
 
-Current setup is a working product prototype with local API storage. Smart contracts are prepared separately in `../contracts`.
+It includes:
+- Wallet-connected frontend (RainbowKit + Wagmi)
+- Creator flow: create issue-linked bounties
+- Developer flow: submit PR links
+- Resolution status tracking with clear approval/rejection reasons
+- Native-token escrow contracts ready to deploy
 
-## Stack
+## Project Structure
 
-- Next.js (App Router)
-- TypeScript
-- TailwindCSS
-- RainbowKit + Wagmi + viem
-- React Query
+- `nextjs/` — frontend app and local API prototype
+- `contracts/` — Solidity escrow contracts + deployment scripts
 
-## App Routes
+## Frontend Overview (`nextjs/`)
 
+### Main routes
 - `/` — landing page
-- `/dashboard` — bounty workflow UI
-- `/api/bounties` — list/create bounties
+- `/dashboard` — creator/developer bounty console
+- `/api/bounties` — list/create bounties (prototype store)
 - `/api/bounties/[id]/submit` — submit PR + resolve prototype flow
 
-## Local Run
-
+### Run locally
 ```bash
+cd nextjs
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open `http://localhost:3000`.
 
-## Wallet Setup
-
-Add a WalletConnect project ID in `.env.local`:
-
+### Wallet env
+Create `nextjs/.env.local`:
 ```bash
 NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_project_id
 ```
 
-Without this, wallet connector may not work correctly in production wallets.
+## Contracts Overview (`contracts/`)
 
-## Contracts (Escrow)
+### Contracts
+- `BountyEscrowNative.sol` — recommended escrow for native OKB (`msg.value`)
+- `BountyEscrow.sol` — optional ERC20 escrow variant
+- `MockUSDC.sol` — test token for ERC20 flow experiments
 
-Escrow contracts live in:
+### Deploy native escrow (testnet)
+```bash
+cd contracts
+npm install
+cp .env.example .env
+# set XLAYER_TESTNET_RPC_URL + DEPLOYER_PRIVATE_KEY
+npm run deploy:testnet
+```
 
-- `../contracts/BountyEscrow.sol`
-- `../contracts/MockUSDC.sol`
+### Deployed contract (XLayer testnet)
+- `BountyEscrowNative`: `0xee34aef61c8f20703a89eEcfC1eB5819Fd18FfcC`
+- Explorer: [View on OKX XLayer Explorer](https://www.okx.com/web3/explorer/xlayer-test/address/0xee34aef61c8f20703a89eEcfC1eB5819Fd18FfcC)
 
-These are intended for wiring the dashboard to on-chain bounty create/submit/resolve flows.
+## Notes
+
+- Frontend currently uses in-memory API data for speed of iteration.
+- Next step is wiring frontend actions directly to deployed `BountyEscrowNative`.

@@ -3,7 +3,7 @@ export type BountyStatus = "open" | "submitted" | "resolved";
 export interface BountyItem {
   id: string;
   issueUrl: string;
-  amountUsdc: number;
+  amountOkb: number;
   creator: string;
   createdAt: string;
   status: BountyStatus;

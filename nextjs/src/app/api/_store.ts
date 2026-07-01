@@ -4,7 +4,7 @@ const seed: BountyItem[] = [
   {
     id: "bty_seed_1",
     issueUrl: "https://github.com/example/repo/issues/42",
-    amountUsdc: 50,
+    amountOkb: 0.35,
     creator: "0xCreatorDemo",
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString(),
     status: "open",
