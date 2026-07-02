@@ -8,7 +8,7 @@ export function Footer() {
       <div className="section-container flex h-11 items-center justify-between text-xs text-green-300">
         <span>XLayer-Bounty</span>
         <Link
-          href="https://twitter.com"
+          href="https://x.com/XLayer_Bounty"
           target="_blank"
           rel="noreferrer"
           aria-label="Twitter"

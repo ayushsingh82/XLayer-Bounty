@@ -1,65 +1,140 @@
 # XLayer-Bounty
 
-XLayer-Bounty is a bounty platform prototype on XLayer using native OKB escrow.
+XLayer-Bounty is an agent-first bounty automation prototype on XLayer using native OKB escrow.
 
-![XLayer-Bounty Logo](nextjs/public/logo.png)
+<img src="frontend/public/logo.png" alt="XLayer-Bounty Logo" width="140" />
 
-It includes:
-- Wallet-connected frontend (RainbowKit + Wagmi)
-- Creator flow: create issue-linked bounties
-- Developer flow: submit PR links
-- Resolution status tracking with clear approval/rejection reasons
-- Native-token escrow contracts ready to deploy
+## Problem
+
+Open-source bounty payouts are slow and inconsistent because PR verification is mostly manual.  
+Maintainers become bottlenecks, contributors wait too long, and smaller bounties often get ignored.
+
+## Solution
+
+Use an agent-driven onchain flow:
+- Operator creates funded bounty with a wallet transaction.
+- Solver submits PR URL plus payout wallet address.
+- Agent evaluates GitHub issue + PR signals.
+- Contract resolves payout (`approve`) or refund (`reject`) transparently.
+
+## Market Opportunity
+
+- Global open-source contribution and developer incentive programs are large and growing.
+- Teams running recurring bounties need faster, auditable reward operations.
+- Agent-assisted review + onchain settlement can reduce ops overhead and improve contributor trust.
+
+## Why This Matters
+
+- **For maintainers:** fewer repetitive review-to-payout tasks.
+- **For contributors:** faster reward decisions with clearer acceptance signals.
+- **For teams:** auditable bounty operations suitable for grants, community programs, and hackathons.
+
+## Agent Workflow Diagram
+
+```mermaid
+flowchart TD
+    A[Operator publishes funded bounty with wallet tx] --> B[Solver submits PR URL plus payout wallet]
+    B --> C[Agent fetches issue plus PR via GitHub API]
+    C --> D[Agent evaluates merge and quality heuristics]
+    D --> E{Approve?}
+    E -- Yes --> F[resolveBounty(..., true)]
+    E -- No --> G[resolveBounty(..., false)]
+    F --> H[Funds sent to solver]
+    G --> I[Funds returned to creator]
+```
+
+## System Architecture
+
+```mermaid
+flowchart LR
+    FE[Frontend dApp] --> API[Local API Prototype]
+    FE --> CHAIN[XLayer BountyEscrowNative]
+    API --> AGENT[Agent Resolver Scripts]
+    AGENT --> GH[GitHub API]
+    AGENT --> CHAIN
+    AGENT --> PACK[Judge Evidence Packs md/json]
+```
+
+Fallback architecture:
+
+```text
+Frontend -> (wallet tx) -> XLayer contract
+Frontend -> local API metadata
+Agent scripts -> GitHub API + contract state -> payout decision + judge evidence pack
+```
+
+Fallback text flow:
+
+```text
+Operator wallet tx -> Solver submission (PR + payout wallet)
+-> Agent checks GitHub issue/PR -> Approve?
+-> Yes: release to solver
+-> No: refund creator
+```
 
 ## Project Structure
 
-- `nextjs/` — frontend app and local API prototype
-- `contracts/` — Solidity escrow contracts + deployment scripts
+- `frontend/` - Next.js app (operator + solver console)
+- `contracts/` - Solidity escrow contracts + agent scripts
 
-## Frontend Overview (`nextjs/`)
+## Frontend Overview (`frontend/`)
 
-### Main routes
-- `/` — landing page
-- `/dashboard` — creator/developer bounty console
-- `/api/bounties` — list/create bounties (prototype store)
-- `/api/bounties/[id]/submit` — submit PR + resolve prototype flow
+### Routes
+- `/` - landing page
+- `/dashboard` - operator/solver bounty console
+- `/api/bounties` - list/create bounties (prototype store)
+- `/api/bounties/[id]/submit` - submit PR + resolve prototype flow
 
-### Run locally
+### User roles
+- **Operator:** creates funded bounties and monitors lifecycle.
+- **Solver:** submits PR URL and payout wallet.
+- **Agent:** evaluates signals, produces recommendation/evidence, and resolves outcomes.
+
+### Run local
 ```bash
-cd nextjs
+cd frontend
 npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`.
-
-### Wallet env
-Create `nextjs/.env.local`:
+### Wallet env (`frontend/.env.local`)
 ```bash
 NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_project_id
+NEXT_PUBLIC_BOUNTY_ESCROW_NATIVE_ADDRESS=0xee34aef61c8f20703a89eEcfC1eB5819Fd18FfcC
 ```
 
 ## Contracts Overview (`contracts/`)
-
-### Contracts
-- `BountyEscrowNative.sol` — recommended escrow for native OKB (`msg.value`)
-- `BountyEscrow.sol` — optional ERC20 escrow variant
-- `MockUSDC.sol` — test token for ERC20 flow experiments
 
 ### Deploy native escrow (testnet)
 ```bash
 cd contracts
 npm install
 cp .env.example .env
-# set XLAYER_TESTNET_RPC_URL + DEPLOYER_PRIVATE_KEY
 npm run deploy:testnet
 ```
 
-### Deployed contract (XLayer testnet)
+### Deployed contract
 - `BountyEscrowNative`: `0xee34aef61c8f20703a89eEcfC1eB5819Fd18FfcC`
 - Explorer: [View on OKX XLayer Explorer](https://www.okx.com/web3/explorer/xlayer-test/address/0xee34aef61c8f20703a89eEcfC1eB5819Fd18FfcC)
 
-## Notes
+## Judge-Friendly Verification Flow
 
-- Frontend currently uses in-memory API data for speed of iteration.
-- Next step is wiring frontend actions directly to deployed `BountyEscrowNative`.
+```mermaid
+sequenceDiagram
+    participant J as Judge
+    participant S as Script
+    participant G as GitHub API
+    participant C as XLayer Contract
+    J->>S: run build_judge_pack.py
+    S->>G: fetch issue + PR + changed files
+    S->>C: optional tx hash/context linkage
+    S-->>J: markdown report + json evidence
+```
+
+## Judge Verification
+
+```bash
+cd contracts
+pip install -r scripts/requirements-agent.txt
+python scripts/build_judge_pack.py --issue-url <issue> --pr-url <pr>
+```
