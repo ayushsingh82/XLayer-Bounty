@@ -29,19 +29,7 @@ Use an agent-driven onchain flow:
 - **For contributors:** faster reward decisions with clearer acceptance signals.
 - **For teams:** auditable bounty operations suitable for grants, community programs, and hackathons.
 
-## Agent Workflow Diagram
 
-```mermaid
-flowchart TD
-    A[Operator publishes funded bounty with wallet tx] --> B[Solver submits PR URL plus payout wallet]
-    B --> C[Agent fetches issue plus PR via GitHub API]
-    C --> D[Agent evaluates merge and quality heuristics]
-    D --> E{Approve?}
-    E -- Yes --> F[resolveBounty(..., true)]
-    E -- No --> G[resolveBounty(..., false)]
-    F --> H[Funds sent to solver]
-    G --> I[Funds returned to creator]
-```
 
 ## System Architecture
 
