@@ -1,41 +1,45 @@
-import type { BountyItem } from "@/lib/types";
+import type { RetroPool, Claim } from "@/lib/types";
 
-const seed: BountyItem[] = [
+export const poolStore: RetroPool[] = [
   {
-    id: "bty_seed_1",
-    issueUrl: "https://github.com/okx/xlayer-docs/issues/152",
-    amountOkb: 0.35,
-    creator: "0xCreatorDemo",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 9).toISOString(),
-    status: "open",
+    id: "pool_001",
+    name: "Critical OSS Infrastructure Fund",
+    description:
+      "Retroactively rewards widely-used open-source libraries that power production software but have never been compensated.",
+    amountKas: 50000,
+    remainingKas: 38500,
+    criteria: "GitHub repos with >1k stars OR npm packages with >50k weekly downloads",
+    creator: "GCC Foundation",
+    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    status: "active",
+    claimCount: 3,
   },
   {
-    id: "bty_seed_2",
-    issueUrl: "https://github.com/okx/xlayer-docs/issues/140",
-    amountOkb: 0.4,
-    creator: "0xCreatorDemo",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 7).toISOString(),
-    status: "open",
+    id: "pool_002",
+    name: "Privacy & Digital Rights Fund",
+    description:
+      "Funds developers building privacy-preserving and digital rights tools for the public good.",
+    amountKas: 25000,
+    remainingKas: 25000,
+    criteria: "Privacy, encryption, or anonymity tools with >500 GitHub stars",
+    creator: "Digital Rights DAO",
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    status: "active",
+    claimCount: 0,
   },
   {
-    id: "bty_seed_3",
-    issueUrl: "https://github.com/okx/xlayer-toolkit/issues/119",
-    amountOkb: 0.3,
-    creator: "0xCreatorDemo",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
-    status: "open",
-  },
-  {
-    id: "bty_seed_4",
-    issueUrl: "https://github.com/okx/xlayer-toolkit/issues/75",
-    amountOkb: 0.25,
-    creator: "0xCreatorDemo",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
-    status: "open",
+    id: "pool_003",
+    name: "Developer Tooling Retroactive Grant",
+    description:
+      "Rewards open-source developer tools — CLIs, formatters, linters, bundlers — used by millions of developers daily.",
+    amountKas: 30000,
+    remainingKas: 30000,
+    criteria: "Dev tooling repos with >500 forks or >5k weekly npm downloads",
+    creator: "Imperial Builders DAO",
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    status: "active",
+    claimCount: 0,
   },
 ];
 
-// In-memory store for local dev prototype.
-// Replace with on-chain + relayer source for production.
-export const bountyStore: BountyItem[] = seed;
-
+export const claimStore: Claim[] = [];

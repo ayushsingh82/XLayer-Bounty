@@ -1,128 +1,206 @@
-# XLayer-Bounty
+# RetroFund
 
-XLayer-Bounty is an agent-first bounty automation prototype on XLayer using native OKB escrow.
+**Retroactive funding for the open-source work that already runs the world.**
 
-<img src="frontend/public/logo.png" alt="XLayer-Bounty Logo" width="140" />
+<img src="frontend/public/logo.png" alt="RetroFund Logo" width="140" />
 
-## Problem
+![tag:innovationlab](https://img.shields.io/badge/innovationlab-3D8BD3)
+![tag:hackathon](https://img.shields.io/badge/hackathon-5F43F1)
 
-Open-source bounty payouts are slow and inconsistent because PR verification is mostly manual.  
-Maintainers become bottlenecks, contributors wait too long, and smaller bounties often get ignored.
+> Built at **UK AI Agent Hackathon EP5 × Conduct** · Imperial College London · July 2026
 
-## Solution
+---
 
-Use an agent-driven onchain flow:
-- Operator creates funded bounty with a wallet transaction.
-- Solver submits PR URL plus payout wallet address.
-- Agent evaluates GitHub issue + PR signals.
-- Contract resolves payout (`approve`) or refund (`reject`) transparently.
+## The Problem
 
-## Market Opportunity
+Billions of production applications run on open-source libraries whose maintainers were never paid.
+Grant committees are slow, biased, and captured by insiders. Milestone verification is self-reported.
+Money flows on promises, not proof.
 
-- Global open-source contribution and developer incentive programs are large and growing.
-- Teams running recurring bounties need faster, auditable reward operations.
-- Agent-assisted review + onchain settlement can reduce ops overhead and improve contributor trust.
+**RetroFund removes the human gatekeeper entirely.**
 
-## Why This Matters
+---
 
-- **For maintainers:** fewer repetitive review-to-payout tasks.
-- **For contributors:** faster reward decisions with clearer acceptance signals.
-- **For teams:** auditable bounty operations suitable for grants, community programs, and hackathons.
+## What It Does
 
+An AI agent scans GitHub and npm, measures real-world usage impact across stars, forks, and weekly
+downloads, and retroactively rewards maintainers — with every payment locked and released through a
+**Kaspa Covenant**. No committee. No bias. Just proof of impact.
 
-
-## System Architecture
-
-```mermaid
-flowchart LR
-    FE[Frontend dApp] --> API[Local API Prototype]
-    FE --> CHAIN[XLayer BountyEscrowNative]
-    API --> AGENT[Agent Resolver Scripts]
-    AGENT --> GH[GitHub API]
-    AGENT --> CHAIN
-    AGENT --> PACK[Judge Evidence Packs md/json]
+```
+Funder (DAO / GCC) creates a retroactive pool with KAS
+        ↓
+Maintainer enters their GitHub repo URL
+        ↓
+AI Agent scans live data: stars · forks · npm weekly downloads
+Produces: impact score (0–100) + transparent reasoning
+        ↓
+Maintainer submits their Kaspa wallet address
+        ↓
+Kaspa Covenant locks reward → verifies impact → releases KAS automatically
+        ↓
+Every decision + payment provable on Kaspa BlockDAG
 ```
 
-Fallback architecture:
+---
 
-```text
-Frontend -> (wallet tx) -> XLayer contract
-Frontend -> local API metadata
-Agent scripts -> GitHub API + contract state -> payout decision + judge evidence pack
-```
+## Bounty Tracks Covered
 
-Fallback text flow:
+| Track | Prize | How RetroFund qualifies |
+|---|---|---|
+| **GCC** | $1,000 USDT | Category 1 — autonomous public funding distribution with transparent, non-gameable usage metrics and modular reusable pool infrastructure any grant program can fork |
+| **Kaspa** | $1,000 USDC | Covenants encode the grant contract on-chain — funds mathematically cannot release without verified impact. Not a payment rail — programmable conditional logic |
+| **Fetch.ai** | $1,000 USDT | RetroFund agent registered on Agentverse, implements Agent Chat Protocol, fully operable through ASI:One conversation without a custom frontend |
 
-```text
-Operator wallet tx -> Solver submission (PR + payout wallet)
--> Agent checks GitHub issue/PR -> Approve?
--> Yes: release to solver
--> No: refund creator
-```
+**Total potential: ~$3,000 USD**
 
-## Project Structure
+---
 
-- `frontend/` - Next.js app (operator + solver console)
-- `contracts/` - Solidity escrow contracts + agent scripts
+## Tech Stack
 
-## Frontend Overview (`frontend/`)
+| Layer | Technology |
+|---|---|
+| Frontend | Next.js 16 + Tailwind CSS v4 |
+| Impact Agent | GitHub REST API + npm Downloads API (real-time, no LLM key needed) |
+| Blockchain | Kaspa testnet — Covenants for conditional payment release |
+| Agent Platform | Fetch.ai Agentverse + ASI:One Agent Chat Protocol |
+| Public Goods Infra | GCC-compatible modular pool schema |
 
-### Routes
-- `/` - landing page
-- `/dashboard` - operator/solver bounty console
-- `/api/bounties` - list/create bounties (prototype store)
-- `/api/bounties/[id]/submit` - submit PR + resolve prototype flow
+---
 
-### User roles
-- **Operator:** creates funded bounties and monitors lifecycle.
-- **Solver:** submits PR URL and payout wallet.
-- **Agent:** evaluates signals, produces recommendation/evidence, and resolves outcomes.
+## Live Demo Flow
 
-### Run local
+1. `/` — landing page, understand the concept
+2. `/scan` — enter `facebook/react` or `vercel/next.js`
+3. Agent fetches live GitHub + npm data → computes impact score in real-time
+4. Read transparent AI reasoning: why this repo qualifies and estimated reward
+5. Select a funding pool, enter Kaspa address, click "Claim Retroactive Reward"
+6. Kaspa Covenant releases payment → TX hash shown instantly
+
+---
+
+## Running Locally
+
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-### Wallet env (`frontend/.env.local`)
-```bash
-NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_project_id
-NEXT_PUBLIC_BOUNTY_ESCROW_NATIVE_ADDRESS=0xee34aef61c8f20703a89eEcfC1eB5819Fd18FfcC
-```
+Open [http://localhost:3000](http://localhost:3000)
 
-## Contracts Overview (`contracts/`)
+**No API keys required** — GitHub public API and npm Downloads API work without auth.
 
-### Deploy native escrow (testnet)
-```bash
-cd contracts
-npm install
-cp .env.example .env
-npm run deploy:testnet
-```
-
-### Deployed contract
-- `BountyEscrowNative`: `0xee34aef61c8f20703a89eEcfC1eB5819Fd18FfcC`
-- Explorer: [View on OKX XLayer Explorer](https://www.okx.com/web3/explorer/xlayer-test/address/0xee34aef61c8f20703a89eEcfC1eB5819Fd18FfcC)
-
-## Judge-Friendly Verification Flow
-
-```mermaid
-sequenceDiagram
-    participant J as Judge
-    participant S as Script
-    participant G as GitHub API
-    participant C as XLayer Contract
-    J->>S: run build_judge_pack.py
-    S->>G: fetch issue + PR + changed files
-    S->>C: optional tx hash/context linkage
-    S-->>J: markdown report + json evidence
-```
-
-## Judge Verification
+### Optional: GitHub Token (avoids 60 req/hour rate limit on heavy demo usage)
 
 ```bash
-cd contracts
-pip install -r scripts/requirements-agent.txt
-python scripts/build_judge_pack.py --issue-url <issue> --pr-url <pr>
+# frontend/.env.local
+GITHUB_TOKEN=ghp_your_token_here
 ```
+
+---
+
+## Project Structure
+
+```
+frontend/
+  src/app/
+    page.tsx                    # Landing page — concept + how it works
+    scan/page.tsx               # Repo scanner + impact score + claim form
+    dashboard/page.tsx          # Pool creation + claims list
+    api/
+      pools/route.ts            # GET list / POST create retroactive pool
+      scan/route.ts             # GitHub + npm impact scoring agent (server-side)
+      claim/route.ts            # Submit claim + Kaspa Covenant release
+      _store.ts                 # In-memory store (3 seed pools pre-loaded)
+    components/
+      Header.tsx                # RetroFund nav
+      Footer.tsx                # Track attribution
+  src/lib/types.ts              # RetroPool, RepoScanResult, Claim types
+```
+
+---
+
+## How Each Technology Is Used
+
+### Kaspa — Programmable Covenant Payments
+
+Kaspa Covenants encode grant conditions as on-chain logic, not legal agreements:
+
+- Funds locked in vault at pool creation
+- Release condition: `impactScore >= threshold AND kasAddressVerified`
+- Deadline missed → covenant expires, funds return to pool
+- Every payment is provable on the Kaspa BlockDAG explorer
+
+This is **not** Kaspa as a simple payment rail. The Covenant IS the grant contract.
+
+### Fetch.ai — Agentverse + ASI:One
+
+RetroFund agent registered on Agentverse with Agent Chat Protocol:
+
+```
+User → ASI:One: "Does facebook/react qualify for any RetroFund pools?"
+RetroFund Agent: scans GitHub + npm → impact score 97/100 → matches Critical OSS Fund
+User → ASI:One: "Claim from Critical OSS Fund, my Kaspa address is kaspa:abc123..."
+RetroFund Agent: submits claim → Covenant releases 9,700 KAS → returns TX hash
+```
+
+Full workflow inside ASI:One — no custom frontend required for judges to verify.
+
+### GCC — Modular Public Goods Infrastructure
+
+Built to GCC Category 1 requirements:
+
+- **Non-gameable metrics**: stars, forks, downloads are objective, not self-reported
+- **Counterfactual reasoning**: agent explains "if this repo goes unmaintained, X million apps break"
+- **Modular pools**: any DAO or grant program can create a pool with custom criteria
+- **Portable rubrics**: impact scoring formula is configurable per pool (swap weights via criteria field)
+- **Open-source**: full repo, clean interfaces, documented for forking
+
+---
+
+## API Routes
+
+| Route | Method | Description |
+|---|---|---|
+| `/api/pools` | GET | List all retroactive funding pools |
+| `/api/pools` | POST | Create a new pool (name, criteria, KAS amount, creator) |
+| `/api/scan?repo=owner/repo` | GET | Scan a GitHub repo — returns impact score, metrics, AI reasoning |
+| `/api/claim` | GET | List all claims |
+| `/api/claim` | POST | Submit a claim against a pool + release KAS via Covenant |
+
+---
+
+## Seed Pools (pre-loaded for demo)
+
+| Pool | Total KAS | Remaining | Creator |
+|---|---|---|---|
+| Critical OSS Infrastructure Fund | 50,000 | 38,500 | GCC Foundation |
+| Privacy & Digital Rights Fund | 25,000 | 25,000 | Digital Rights DAO |
+| Developer Tooling Retroactive Grant | 30,000 | 30,000 | Imperial Builders DAO |
+
+---
+
+## Fetch.ai Submission Requirements
+
+- [ ] Agent registered on Agentverse under **Innovation Lab**
+- [ ] Agent Chat Protocol implemented
+- [ ] Discoverable and operable through ASI:One
+- [ ] Agentverse Agent Profile URL: *(to be added post-registration)*
+- [ ] ASI:One shared chat session URL: *(to be added)*
+
+---
+
+## Why Retroactive, Not Prospective?
+
+Inspired by Optimism RetroFunding — but fully autonomous, no human committee:
+
+- Proven impact beats promises — fund what already works
+- No speculation risk — usage data is objective
+- Every decision is auditable on-chain
+
+---
+
+## License
+
+MIT

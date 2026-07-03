@@ -1,22 +1,43 @@
-export type BountyStatus = "open" | "submitted" | "resolved";
+export type PoolStatus = "active" | "exhausted" | "closed";
+export type ClaimStatus = "pending" | "verified" | "paid";
 
-export interface BountyItem {
+export interface RetroPool {
   id: string;
-  issueUrl: string;
-  amountOkb: number;
+  name: string;
+  description: string;
+  amountKas: number;
+  remainingKas: number;
+  criteria: string;
   creator: string;
   createdAt: string;
-  status: BountyStatus;
-  submission?: {
-    prUrl: string;
-    solver: string;
-    payoutAddress: string;
-    submittedAt: string;
-  };
-  resolution?: {
-    approved: boolean;
-    reason: string;
-    resolvedAt: string;
-  };
+  status: PoolStatus;
+  claimCount: number;
 }
 
+export interface RepoScanResult {
+  owner: string;
+  repo: string;
+  description: string | null;
+  stars: number;
+  forks: number;
+  language: string | null;
+  license: string | null;
+  weeklyDownloads: number | null;
+  impactScore: number;
+  estimatedRewardKas: number;
+  agentReasoning: string;
+  url: string;
+}
+
+export interface Claim {
+  id: string;
+  poolId: string;
+  poolName: string;
+  repoUrl: string;
+  maintainerHandle: string;
+  kasAddress: string;
+  amountKas: number;
+  status: ClaimStatus;
+  submittedAt: string;
+  txHash?: string;
+}
