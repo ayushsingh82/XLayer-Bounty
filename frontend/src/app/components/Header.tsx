@@ -6,22 +6,35 @@ import { usePathname } from "next/navigation";
 
 export function Header() {
   const path = usePathname();
-  const linkClass = (href: string) =>
-    `transition-colors hover:text-green-200 ${path === href ? "text-green-200 font-semibold" : ""}`;
+  const active = (href: string) => path === href;
 
   return (
-    <header className="w-full border-b border-green-500/30 bg-black">
-      <div className="h-14 md:h-16">
-        <div className="section-container flex h-full min-h-[3.5rem] items-center justify-between py-2 md:min-h-16">
-          <Link href="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight text-[#86efac] md:text-xl hover:opacity-80">
-            <Image src="/logo.png" alt="RetroFund Logo" width={36} height={36} className="rounded-sm" />
-            <span>RetroFund</span>
-          </Link>
-          <nav className="flex items-center gap-4 text-sm font-medium text-green-300 md:gap-6">
-            <Link href="/scan" className={linkClass("/scan")}>Scan Repo</Link>
-            <Link href="/dashboard" className={linkClass("/dashboard")}>Dashboard</Link>
-          </nav>
-        </div>
+    <header className="w-full sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-[#e2e8f0]">
+      <div className="wrap flex h-14 items-center justify-between">
+        <Link href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+          <Image src="/logo.png" alt="RetroFund" width={26} height={26} className="rounded" />
+          <span className="text-base font-semibold text-[#0f172a] tracking-tight">RetroFund</span>
+        </Link>
+
+        <nav className="flex items-center gap-1">
+          {[
+            { href: "/scan",        label: "Scan" },
+            { href: "/dashboard",   label: "Dashboard" },
+            { href: "/create-pool", label: "Create Pool" },
+          ].map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                active(href)
+                  ? "text-[#16a34a] bg-[#f0fdf4]"
+                  : "text-[#64748b] hover:text-[#0f172a]"
+              }`}
+            >
+              {label}
+            </Link>
+          ))}
+        </nav>
       </div>
     </header>
   );

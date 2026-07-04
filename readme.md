@@ -44,18 +44,6 @@ Every decision + payment provable on Kaspa BlockDAG
 
 ---
 
-## Bounty Tracks Covered
-
-| Track | Prize | How RetroFund qualifies |
-|---|---|---|
-| **GCC** | $1,000 USDT | Category 1 — autonomous public funding distribution with transparent, non-gameable usage metrics and modular reusable pool infrastructure any grant program can fork |
-| **Kaspa** | $1,000 USDC | Covenants encode the grant contract on-chain — funds mathematically cannot release without verified impact. Not a payment rail — programmable conditional logic |
-| **Fetch.ai** | $1,000 USDT | RetroFund agent registered on Agentverse, implements Agent Chat Protocol, fully operable through ASI:One conversation without a custom frontend |
-
-**Total potential: ~$3,000 USD**
-
----
-
 ## Tech Stack
 
 | Layer | Technology |

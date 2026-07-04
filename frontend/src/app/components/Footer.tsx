@@ -2,10 +2,14 @@
 
 export function Footer() {
   return (
-    <footer className="border-t border-green-500/30 bg-black">
-      <div className="section-container flex h-11 items-center justify-between text-xs text-green-300">
-        <span>RetroFund — powered by Kaspa · Fetch.ai · GCC</span>
-        <span className="text-green-500/60">UK AI Agent Hackathon EP5 × Conduct</span>
+    <footer className="border-t border-[#e2e8f0] mt-auto bg-white">
+      <div className="wrap flex h-12 items-center justify-between">
+        <span className="text-xs text-[#0f172a] font-medium">© 2026 RetroFund</span>
+        <div className="flex items-center gap-3 text-xs text-[#0f172a] font-medium">
+          <span>Kaspa</span><span className="text-[#94a3b8]">·</span>
+          <span>Fetch.ai</span><span className="text-[#94a3b8]">·</span>
+          <span>GCC</span>
+        </div>
       </div>
     </footer>
   );
