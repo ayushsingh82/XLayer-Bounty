@@ -222,7 +222,18 @@ export default function DashboardPage() {
                 {c.txHash && (
                   <div className="mt-3 pt-3 border-t border-[#f1f5f9]">
                     <p className="text-[10px] text-[#94a3b8] uppercase tracking-widest font-semibold mb-0.5">Kaspa TX</p>
-                    <p className="font-mono text-xs text-[#64748b] truncate">{c.txHash}</p>
+                    {c.explorerUrl ? (
+                      <a
+                        href={c.explorerUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono text-xs text-[#16a34a] truncate underline block"
+                      >
+                        {c.txHash}
+                      </a>
+                    ) : (
+                      <p className="font-mono text-xs text-[#64748b] truncate">{c.txHash}</p>
+                    )}
                   </div>
                 )}
 

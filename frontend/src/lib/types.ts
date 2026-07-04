@@ -40,4 +40,5 @@ export interface Claim {
   status: ClaimStatus;
   submittedAt: string;
   txHash?: string;
+  explorerUrl?: string;
 }

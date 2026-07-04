@@ -257,7 +257,7 @@ export default function ScanPage() {
                   <input
                     value={kasAddress}
                     onChange={(e) => setKasAddress(e.target.value)}
-                    placeholder="Kaspa wallet address (kaspa:...)"
+                    placeholder="Kaspa testnet address (kaspatest:...)"
                     className="field"
                   />
                   {claimError && (
@@ -292,7 +292,18 @@ export default function ScanPage() {
                   </div>
                   <div className="flex justify-between gap-4">
                     <span className="text-[#64748b] flex-shrink-0">Kaspa TX</span>
-                    <span className="font-mono text-xs text-[#64748b] truncate">{claim.txHash}</span>
+                    {claim.explorerUrl ? (
+                      <a
+                        href={claim.explorerUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono text-xs text-[#16a34a] truncate underline"
+                      >
+                        {claim.txHash}
+                      </a>
+                    ) : (
+                      <span className="font-mono text-xs text-[#64748b] truncate">{claim.txHash}</span>
+                    )}
                   </div>
                 </div>
               </div>

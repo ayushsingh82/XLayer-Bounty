@@ -248,14 +248,25 @@ export default function Home() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1.25rem" }}>
             {[
               { Icon: IconKaspa, name: "Kaspa",    col: "#16a34a", tag: "BlockDAG · Covenants",       d: "On-chain grant contracts. Funds release only when impact is verified — no human approvals." },
-              { Icon: IconFetch, name: "Fetch.ai", col: "#3b82f6", tag: "Agentverse · ASI:One",      d: "uAgent implements Agent Chat Protocol. Fully operable through ASI:One without any frontend." },
+              { Icon: IconFetch, name: "Fetch.ai", col: "#3b82f6", tag: "Agentverse · ASI:One",      d: "uAgent implements Agent Chat Protocol. Fully operable through ASI:One without any frontend.", link: "https://agentverse.ai/agents/details/agent1qttpqmzegka7kdfz5wn4ve9wnalt374ne6ajtqcnaa0l7k9r9304kcd9akf/profile" },
               { Icon: IconGCC,   name: "GCC",      col: "#8b5cf6", tag: "Public Goods · Open Source", d: "Modular pool schema, non-gameable metrics, open-source — forkable by any grant program." },
-            ].map(({ Icon, name, col, tag, d }, i) => (
+            ].map(({ Icon, name, col, tag, d, link }, i) => (
               <div
                 key={name}
                 className="anim-fade-up"
-                style={{ animationDelay: `${i * 0.08}s`, border: "1.5px solid #e2e8f0", borderRadius: "4px", padding: "1.75rem", background: "#ffffff" }}
+                style={{ animationDelay: `${i * 0.08}s`, border: "1.5px solid #e2e8f0", borderRadius: "4px", padding: "1.75rem", background: "#ffffff", position: "relative" }}
               >
+                {link && (
+                  <a
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="View agent on Agentverse"
+                    style={{ position: "absolute", top: "0.875rem", right: "0.875rem", fontSize: "0.6875rem", fontWeight: 700, color: col, textDecoration: "none", display: "flex", alignItems: "center", gap: "0.2rem" }}
+                  >
+                    View agent ↗
+                  </a>
+                )}
                 <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.75rem" }}>
                   <Icon />
                   <p style={{ fontSize: "1.125rem", fontWeight: 800, color: col }}>{name}</p>
