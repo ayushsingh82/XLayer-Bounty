@@ -67,8 +67,14 @@ export async function GET(request: Request) {
 
   const [, owner, repo] = match;
 
+  const ghHeaders: Record<string, string> = {
+    Accept: "application/vnd.github+json",
+    "User-Agent": "RetroFund/1.0",
+  };
+  if (process.env.GITHUB_TOKEN) ghHeaders["Authorization"] = `Bearer ${process.env.GITHUB_TOKEN}`;
+
   const ghRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
-    headers: { Accept: "application/vnd.github+json", "User-Agent": "RetroFund/1.0" },
+    headers: ghHeaders,
     next: { revalidate: 60 },
   });
 
