@@ -90,12 +90,20 @@ export default function Home() {
               fontSize: "clamp(2.25rem, 6vw, 5rem)",
               fontWeight: 800,
               letterSpacing: "-0.03em",
-              lineHeight: 1.05,
+              lineHeight: 1.1,
               color: "#0f172a",
             }}
           >
             Pay the work that<br />
-            <span style={{ color: "#16a34a" }}>already runs the world</span>
+            <span style={{
+              color: "#16a34a",
+              fontFamily: "var(--font-fraunces)",
+              fontStyle: "italic",
+              fontWeight: 900,
+              letterSpacing: "-0.02em",
+            }}>
+              already runs the world
+            </span>
           </h1>
 
           <p

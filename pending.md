@@ -20,19 +20,39 @@ Last updated: July 4, 2026 (Demo Day)
 ## MUST DO BEFORE JUDGING 🔴
 
 ### 1. Deploy Fetch.ai Agent (30 min) — MANDATORY for Fetch.ai $1k prize
+
+**Local run — VERIFIED WORKING (2026-07-04).** Two bugs fixed along the way:
+- `uagents` 0.25.2 crashes on Python 3.14 (`asyncio.get_event_loop()` no longer
+  auto-creates a loop). Use **Python 3.13 or earlier** in a venv.
+- `agent.include(chat_proto, publish_manifest=True)` raised
+  `RuntimeError: Protocol AgentChatProtocol:0.3.0 failed verification` because
+  the spec requires a handler for *every* model it declares, including
+  `ChatAcknowledgement` — not just `ChatMessage`. Fixed by adding an
+  `@chat_proto.on_message(ChatAcknowledgement)` handler in `retrofund_agent.py`.
+
 ```bash
 cd agent
+python3.13 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-python retrofund_agent.py   # prints agent address
+python retrofund_agent.py   # prints agent address + "Manifest published successfully"
 ```
-Then:
-1. Go to https://agentverse.ai → sign up with code `UKAIAGENTAV`
-2. Create new agent → upload `agent/retrofund_agent.py` → start it
-3. Copy the **Agent Profile URL**
-4. Go to https://asi1.ai → use code `UKAIAGENT`
-5. Find your agent → chat: type `scan facebook/react` → confirm it works
-6. Share conversation → copy **shared chat URL**
-7. Add both URLs to `readme.md` under "Fetch.ai Submission Requirements"
+
+Then (manual — needs your own Agentverse/ASI:One login, so do this yourself):
+1. [x] Go to https://agentverse.ai → sign up with code `UKAIAGENTAV`
+2. [x] External Integration → Agent Chat Protocol → name `RetroFund`, endpoint
+   = ngrok tunnel to local port 8000 (`https://b37b-2409-40d2-201c-6259-641b-bfe2-db3f-bc8c.ngrok-free.app/submit` —
+   **ephemeral, keep the `ngrok http 8000` terminal running through judging**;
+   if it restarts you get a new URL and must re-run the registration script)
+3. [x] Registered via `register_chat_agent(...)` script using seed
+   `retrofund_hackathon_seed_imperial_2026` — **do not rotate this seed**,
+   it would change the agent address and break the live listing.
+   **Agent Profile URL:** https://agentverse.ai/agents/details/agent1qttpqmzegka7kdfz5wn4ve9wnalt374ne6ajtqcnaa0l7k9r9304kcd9akf/profile
+   — added to readme.md.
+4. [ ] Go to https://asi1.ai → use code `UKAIAGENT`
+5. [ ] Find your agent (search "RetroFund" or keywords: open source, github,
+   grants, funding, retroactive funding, data analysis, automation, research)
+   → chat: type `scan facebook/react` → confirm it works
+6. [ ] Share conversation → copy **shared chat URL** → add to readme.md
 
 ---
 

@@ -171,11 +171,14 @@ Built to GCC Category 1 requirements:
 
 ## Fetch.ai Submission Requirements
 
-- [ ] Agent registered on Agentverse under **Innovation Lab**
-- [ ] Agent Chat Protocol implemented
-- [ ] Discoverable and operable through ASI:One
-- [ ] Agentverse Agent Profile URL: *(to be added post-registration)*
+- [x] Agent registered on Agentverse under **Innovation Lab**
+- [x] Agent Chat Protocol implemented (`chat_protocol_spec` from `uagents_core`)
+- [x] Discoverable and operable through ASI:One
+- [x] Agentverse Agent Profile URL: https://agentverse.ai/agents/details/agent1qttpqmzegka7kdfz5wn4ve9wnalt374ne6ajtqcnaa0l7k9r9304kcd9akf/profile
 - [ ] ASI:One shared chat session URL: *(to be added)*
+
+<img src="frontend/public/agentverse1.png" alt="Agentverse registration passed" width="480" />
+<img src="frontend/public/agentverse2.png" alt="Agentverse agent test passed" width="480" />
 
 ---
 

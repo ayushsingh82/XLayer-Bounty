@@ -29,6 +29,8 @@ from uagents_core.contrib.protocols.chat import (
 agent = Agent(
     name="retrofund-impact-agent",
     seed="retrofund_hackathon_seed_imperial_2026",  # change for production
+    port=8000,
+    endpoint=["https://b37b-2409-40d2-201c-6259-641b-bfe2-db3f-bc8c.ngrok-free.app/submit"],
 )
 
 chat_proto = Protocol(spec=chat_protocol_spec)
@@ -269,6 +271,11 @@ async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
         elif isinstance(item, EndSessionContent):
             ctx.logger.info(f"Session ended with {sender}")
             return
+
+
+@chat_proto.on_message(ChatAcknowledgement)
+async def handle_ack(ctx: Context, sender: str, msg: ChatAcknowledgement):
+    ctx.logger.info(f"Received ack from {sender} for message {msg.acknowledged_msg_id}")
 
 
 # ---------- Run ----------
