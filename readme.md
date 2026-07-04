@@ -57,6 +57,70 @@ Every decision is transparent; every payment has a real tx id on the Kaspa Block
 
 ---
 
+## How Each Technology Is Used
+
+### Kaspa — Agent-Gated Escrow, Real Testnet Settlement
+
+RetroFund runs a real escrow wallet on **Kaspa testnet-10** (`kaspa-escrow/`,
+built with the official `kaspa` Python SDK — no mocked hashes):
+
+- Pool funds are (conceptually) held at the escrow address
+  `kaspatest:qpyd350n5extaz7zetvmd4wnyw43pdkqw6syff8dngjru6sqkx5t6jkvf9ml5`,
+  funded with real testnet KAS from the Kaspa faucet
+- The **AI agent gates the payout**: `impactScore >= threshold` is verified
+  in the app/agent layer *before* `send_reward.py` is ever invoked
+- Once authorized, `send_reward.py` builds, signs, and broadcasts a real
+  transaction via `Generator` — the API route (`/api/claim`) calls it and
+  returns the actual `txId` + a link to the testnet-10 explorer
+  (`https://tn10.kaspa.stream/txs/<txId>`), shown live in the claim UI
+- Every payout is a genuine, verifiable on-chain transaction — not a
+  generated hex string
+
+This is escrow gated by an autonomous agent, not a simple payment rail —
+the condition check happens off-chain (in the agent), the settlement
+happens on-chain (real Kaspa testnet tx).
+
+### Fetch.ai — Agentverse + ASI:One
+
+RetroFund agent (`agent/retrofund_agent.py`) registered and **live** on
+Agentverse with the Agent Chat Protocol:
+
+- **Agent Profile:** https://agentverse.ai/agents/details/agent1qttpqmzegka7kdfz5wn4ve9wnalt374ne6ajtqcnaa0l7k9r9304kcd9akf/profile
+- **Discoverable on ASI:One:** https://asi1.ai/ai/agent1qttpqmzegka7kdfz5wn4ve9wnalt374ne6ajtqcnaa0l7k9r9304kcd9akf
+
+```
+User → ASI:One: "Does facebook/react qualify for any RetroFund pools?"
+RetroFund Agent: scans GitHub + npm → impact score 97/100 → matches Critical OSS Fund
+User → ASI:One: "Claim from Critical OSS Fund, my Kaspa address is kaspatest:abc123..."
+RetroFund Agent: submits claim → escrow releases KAS on testnet-10 → returns real TX id
+```
+
+Full workflow inside ASI:One — no custom frontend required for judges to verify.
+
+### GCC — Modular Public Goods Infrastructure
+
+Built to GCC Category 1 requirements:
+
+- **Non-gameable metrics**: stars, forks, downloads are objective, not self-reported
+- **Counterfactual reasoning**: agent explains "if this repo goes unmaintained, X million apps break"
+- **Modular pools**: any DAO or grant program can create a pool with custom criteria
+- **Portable rubrics**: impact scoring formula is configurable per pool (swap weights via criteria field)
+- **Open-source**: full repo, clean interfaces, documented for forking
+
+---
+
+## API Routes
+
+| Route | Method | Description |
+|---|---|---|
+| `/api/pools` | GET | List all retroactive funding pools |
+| `/api/pools` | POST | Create a new pool (name, criteria, KAS amount, creator) |
+| `/api/scan?repo=owner/repo` | GET | Scan a GitHub repo — returns impact score, metrics, AI reasoning |
+| `/api/claim` | GET | List all claims |
+| `/api/claim` | POST | Submit a claim against a pool + settle a real Kaspa testnet-10 transaction |
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
@@ -119,70 +183,6 @@ frontend/
       Footer.tsx                # Track attribution
   src/lib/types.ts              # RetroPool, RepoScanResult, Claim types
 ```
-
----
-
-## How Each Technology Is Used
-
-### Kaspa — Agent-Gated Escrow, Real Testnet Settlement
-
-RetroFund runs a real escrow wallet on **Kaspa testnet-10** (`kaspa-escrow/`,
-built with the official `kaspa` Python SDK — no mocked hashes):
-
-- Pool funds are (conceptually) held at the escrow address
-  `kaspatest:qpyd350n5extaz7zetvmd4wnyw43pdkqw6syff8dngjru6sqkx5t6jkvf9ml5`,
-  funded with real testnet KAS from the Kaspa faucet
-- The **AI agent gates the payout**: `impactScore >= threshold` is verified
-  in the app/agent layer *before* `send_reward.py` is ever invoked
-- Once authorized, `send_reward.py` builds, signs, and broadcasts a real
-  transaction via `Generator` — the API route (`/api/claim`) calls it and
-  returns the actual `txId` + a link to the testnet-10 explorer
-  (`https://tn10.kaspa.stream/txs/<txId>`), shown live in the claim UI
-- Every payout is a genuine, verifiable on-chain transaction — not a
-  generated hex string
-
-This is escrow gated by an autonomous agent, not a simple payment rail —
-the condition check happens off-chain (in the agent), the settlement
-happens on-chain (real Kaspa testnet tx).
-
-### Fetch.ai — Agentverse + ASI:One
-
-RetroFund agent (`agent/retrofund_agent.py`) registered and **live** on
-Agentverse with the Agent Chat Protocol:
-
-- **Agent Profile:** https://agentverse.ai/agents/details/agent1qttpqmzegka7kdfz5wn4ve9wnalt374ne6ajtqcnaa0l7k9r9304kcd9akf/profile
-- **Discoverable on ASI:One:** https://asi1.ai/ai/agent1qttpqmzegka7kdfz5wn4ve9wnalt374ne6ajtqcnaa0l7k9r9304kcd9akf
-
-```
-User → ASI:One: "Does facebook/react qualify for any RetroFund pools?"
-RetroFund Agent: scans GitHub + npm → impact score 97/100 → matches Critical OSS Fund
-User → ASI:One: "Claim from Critical OSS Fund, my Kaspa address is kaspatest:abc123..."
-RetroFund Agent: submits claim → escrow releases KAS on testnet-10 → returns real TX id
-```
-
-Full workflow inside ASI:One — no custom frontend required for judges to verify.
-
-### GCC — Modular Public Goods Infrastructure
-
-Built to GCC Category 1 requirements:
-
-- **Non-gameable metrics**: stars, forks, downloads are objective, not self-reported
-- **Counterfactual reasoning**: agent explains "if this repo goes unmaintained, X million apps break"
-- **Modular pools**: any DAO or grant program can create a pool with custom criteria
-- **Portable rubrics**: impact scoring formula is configurable per pool (swap weights via criteria field)
-- **Open-source**: full repo, clean interfaces, documented for forking
-
----
-
-## API Routes
-
-| Route | Method | Description |
-|---|---|---|
-| `/api/pools` | GET | List all retroactive funding pools |
-| `/api/pools` | POST | Create a new pool (name, criteria, KAS amount, creator) |
-| `/api/scan?repo=owner/repo` | GET | Scan a GitHub repo — returns impact score, metrics, AI reasoning |
-| `/api/claim` | GET | List all claims |
-| `/api/claim` | POST | Submit a claim against a pool + settle a real Kaspa testnet-10 transaction |
 
 ---
 

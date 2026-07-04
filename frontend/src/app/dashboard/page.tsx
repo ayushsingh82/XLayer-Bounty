@@ -12,6 +12,14 @@ export default function DashboardPage() {
   const [claims, setClaims] = useState<Claim[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [claimOpenId, setClaimOpenId] = useState<string | null>(null);
+  const [repoInput, setRepoInput] = useState("");
+  const [handleInput, setHandleInput] = useState("");
+  const [addressInput, setAddressInput] = useState("");
+  const [claimSubmitting, setClaimSubmitting] = useState(false);
+  const [claimError, setClaimError] = useState<string | null>(null);
+  const [claimResult, setClaimResult] = useState<Claim | null>(null);
+
   const load = useCallback(async () => {
     setLoading(true);
     try {
@@ -27,6 +35,60 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => { void load(); }, [load]);
+
+  function toggleClaimForm(poolId: string) {
+    setClaimOpenId((cur) => (cur === poolId ? null : poolId));
+    setRepoInput("");
+    setHandleInput("");
+    setAddressInput("");
+    setClaimError(null);
+    setClaimResult(null);
+  }
+
+  async function submitClaim(poolId: string) {
+    if (!repoInput.trim() || !handleInput.trim() || !addressInput.trim()) {
+      setClaimError("Repo, GitHub handle, and Kaspa address are all required.");
+      return;
+    }
+    setClaimSubmitting(true);
+    setClaimError(null);
+    setClaimResult(null);
+    try {
+      const scanRes = await fetch(`/api/scan?repo=${encodeURIComponent(repoInput.trim())}`);
+      const scanData = await scanRes.json();
+      if (!scanRes.ok) {
+        setClaimError(scanData.error ?? "Repo scan failed");
+        return;
+      }
+
+      const claimRes = await fetch("/api/claim", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          poolId,
+          repoUrl: scanData.url,
+          maintainerHandle: handleInput.trim(),
+          kasAddress: addressInput.trim(),
+          estimatedRewardKas: scanData.estimatedRewardKas,
+        }),
+      });
+      const claimData = await claimRes.json();
+      if (!claimRes.ok) {
+        setClaimError(claimData.error ?? "Claim failed");
+        return;
+      }
+
+      setClaimResult(claimData);
+      setRepoInput("");
+      setHandleInput("");
+      setAddressInput("");
+      await load();
+    } catch (e) {
+      setClaimError(e instanceof Error ? e.message : "Unknown error");
+    } finally {
+      setClaimSubmitting(false);
+    }
+  }
 
   const statusColor: Record<string, string> = {
     active:    "bg-[#f0fdf4] text-[#16a34a] border-[#bbf7d0]",
@@ -158,6 +220,60 @@ export default function DashboardPage() {
                   )}
                   {pool.creator && (
                     <p className="mt-1.5 text-[10px] text-[#cbd5e1]">Created by {pool.creator}</p>
+                  )}
+
+                  {pool.status === "active" && (
+                    <div className="mt-3 pt-3 border-t border-[#f1f5f9]">
+                      <button
+                        onClick={() => toggleClaimForm(pool.id)}
+                        className="text-xs font-semibold text-[#16a34a] hover:underline"
+                      >
+                        {claimOpenId === pool.id ? "Cancel claim" : "Claim from this pool →"}
+                      </button>
+
+                      {claimOpenId === pool.id && (
+                        <div className="mt-3 space-y-2">
+                          <input
+                            value={repoInput}
+                            onChange={(e) => setRepoInput(e.target.value)}
+                            placeholder="GitHub repo (e.g. facebook/react)"
+                            className="field text-sm"
+                          />
+                          <input
+                            value={handleInput}
+                            onChange={(e) => setHandleInput(e.target.value)}
+                            placeholder="GitHub username"
+                            className="field text-sm"
+                          />
+                          <input
+                            value={addressInput}
+                            onChange={(e) => setAddressInput(e.target.value)}
+                            placeholder="Kaspa testnet address (kaspatest:...)"
+                            className="field text-sm"
+                          />
+                          {claimError && <p className="text-xs text-red-600">{claimError}</p>}
+                          {claimResult && (
+                            <p className="text-xs text-[#16a34a]">
+                              Claimed {claimResult.amountKas.toLocaleString()} KAS —{" "}
+                              {claimResult.explorerUrl ? (
+                                <a href={claimResult.explorerUrl} target="_blank" rel="noopener noreferrer" className="underline">
+                                  view tx
+                                </a>
+                              ) : (
+                                claimResult.txHash
+                              )}
+                            </p>
+                          )}
+                          <button
+                            onClick={() => submitClaim(pool.id)}
+                            disabled={claimSubmitting}
+                            className="btn-primary text-sm w-full justify-center py-2"
+                          >
+                            {claimSubmitting ? "Scanning + settling…" : "Scan repo & claim"}
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               );

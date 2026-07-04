@@ -26,7 +26,7 @@ export function Header() {
           className="flex items-center gap-2.5 flex-shrink-0"
           style={{ textDecoration: "none" }}
         >
-          <Image src="/logo.png" alt="RetroFund" width={26} height={26} style={{ borderRadius: "4px" }} />
+          <Image src="/logo.png" alt="RetroFund" width={38} height={38} style={{ borderRadius: "6px" }} />
           <span style={{ fontSize: "1rem", fontWeight: 600, color: "#0f172a", letterSpacing: "-0.01em" }}>
             RetroFund
           </span>
